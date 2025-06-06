@@ -63,20 +63,22 @@ const AdminPage = () => {
       <header className="bg-gradient-to-r from-blue-600 to-blue-800 text-white shadow-md py-4 px-6">
         <div className="flex justify-between items-center">
           <h1 className="text-2xl font-roboto">Welcome, Kavit</h1>
-          <p className="text-sm">{formatted}</p>
+          <div className="flex flex-col justify-center items-center">
+              <p className="text-sm">{formatted}</p>
+              <h2 className="text-center mt-3 font-bold text-2xl bg-white text-blue-700 rounded-full w-fit mx-auto px-5 py-1 shadow-md">Admin Panel</h2>
+          </div>
           <div className="flex items-center gap-2">
             <User className='text-white bg-blue-700 p-1 rounded-full shadow-md' size={35} />
             <span className="text-white text-lg">Profile</span>
           </div>
         </div>
-        <h2 className="text-center mt-3 font-bold text-2xl bg-white text-blue-700 rounded-full w-fit mx-auto px-5 py-1 shadow-md">Admin Panel</h2>
       </header>
 
       {error && (
         <div className='fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50'>
           <div className='bg-white rounded-xl p-6 max-w-sm w-full text-center shadow-xl'>
             <XCircle className="mx-auto text-red-600 w-12 h-12 mb-3" />
-            <h1 className='font-semibold text-lg text-green-700'>Something goes error. Please Check data to the Form if are correctly</h1>
+            <h1 className='font-semibold text-lg text-green-700'>Something went Wrong. Please Check data to the Form if are correctly</h1>
             <button
               onClick={handleReload}
               className='mt-4 bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded shadow transition'
