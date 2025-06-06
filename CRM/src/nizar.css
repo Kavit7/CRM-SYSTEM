@@ -1,0 +1,22 @@
+@keyframes blinkGradient {
+  0% {
+    background: linear-gradient(to right, #1e3c72, #2a5298);
+  }
+  50% {
+    background: linear-gradient(to right, #2a5298, #1e3c72);
+  }
+  100% {
+    background: linear-gradient(to right, #1e3c72, #2a5298);
+  }
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  animation: blinkGradient 5s infinite;
+  background-size: 200% 200%;
+  transition: background 0.5s ease-in-out;
+  color: white; /* optional for better contrast */
+  font-family: 'Roboto', sans-serif;
+}

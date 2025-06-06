@@ -1,4 +1,4 @@
-import { User, Upload } from 'lucide-react'
+import { User, Upload, CheckCircle } from 'lucide-react'
 import { useState } from 'react'
 import '@fontsource/roboto/500.css'
 
@@ -24,6 +24,11 @@ const AdminPage = () => {
     amount: '',
     status: '',
   })
+  const [error, setError] = useState(false)
+
+  const handleReload = () => {
+    window.location.reload()
+  }
 
   const handlesubmit = async (e) => {
     e.preventDefault()
@@ -41,7 +46,7 @@ const AdminPage = () => {
       })
       const result = await response.json()
       if (response.ok) {
-        alert(result.message)
+        setError(true)
         console.log(result.message)
       } else {
         alert(result.error)
@@ -55,73 +60,106 @@ const AdminPage = () => {
 
   return (
     <>
-      <header className="shadow-lg text-blue-500 top-0 fixed w-full bg-white">
-        <h1 className="text-center p-2 bg-blue-500 text-white w-fit mx-auto rounded mt-2 mb-2">Admin Panel</h1>
-        <div className="flex flex-row justify-between">
-          <h1 className="p-2 text-2xl font-roboto font-sans font-serif">Welcome! Kavit</h1>
-          <h1>{formatted}</h1>
-          <h1 className="mr-4 flex">
-            <User className='text-gray-500 bg-white rounded-[20px] mr-4 shadow-lg' size={35} /> Profile
-          </h1>
+      <header className="bg-gradient-to-r from-blue-600 to-blue-800 text-white shadow-md py-4 px-6">
+        <div className="flex justify-between items-center">
+          <h1 className="text-2xl font-roboto">Welcome, Kavit</h1>
+          <p className="text-sm">{formatted}</p>
+          <div className="flex items-center gap-2">
+            <User className='text-white bg-blue-700 p-1 rounded-full shadow-md' size={35} />
+            <span className="text-white text-lg">Profile</span>
+          </div>
         </div>
+        <h2 className="text-center mt-3 font-bold text-2xl bg-white text-blue-700 rounded-full w-fit mx-auto px-5 py-1 shadow-md">Admin Panel</h2>
       </header>
 
-      <nav className='mt-[120px] ml-[100px] flex '>
-        <ul className='flex mx-auto'>
+      {error && (
+        <div className='fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50'>
+          <div className='bg-white rounded-xl p-6 max-w-sm w-full text-center shadow-xl'>
+            <CheckCircle className="mx-auto text-green-600 w-12 h-12 mb-3" />
+            <h1 className='font-semibold text-lg text-green-700'>Data Successfully Submitted</h1>
+            <button
+              onClick={handleReload}
+              className='mt-4 bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded shadow transition'
+            >
+              OK
+            </button>
+          </div>
+        </div>
+      )}
+
+      <nav className='mt-16 flex justify-center'>
+        <ul className='flex gap-4'>
           <li
-            className='mr-3 rounded shadow-lg p-2 text-blue-500 hover:bg-gray-100 hover:text-blue-700 hover:cursor-pointer transition duration-300 ease-in text-[25px]'
             onClick={() => setPage(prev => ({ ...prev, upload: !prev.upload }))}
+            className='bg-blue-100 text-blue-700 px-6 py-2 rounded-full text-lg font-semibold shadow hover:bg-blue-200 transition cursor-pointer'
           >
-            Upload product
+            Upload Product
           </li>
         </ul>
       </nav>
 
       {page.upload && (
-        <div className='mt-7 flex flex-col items-center p-8 shadow-lg w-[60%] mx-auto shadow-lg rounded-[20px] mb-6'>
-          <Upload size={34} className="text-white text-7xl bg-blue-600 rounded hover:cursor-pointer" />
-          <form className='mt-5 flex-col flex shadow-lg w-full p-5 hover:cursor-pointer' onSubmit={handlesubmit}>
-            <label className='float-left text-blue-500 text-1xl mb-2'>Upload Image Product</label>
-            <input
-              type='file'
-              onChange={(e) => setFormdata({ ...formdata, image: e.target.files[0] })}
-              className='bg-gray-300 p-2 rounded border border-gray-400 mb-2 hover:cursor-pointer'
-            />
-            <label className='text-blue-500 text-1xl mb-2'>Set Title of the Product</label>
-            <input
-              type='text'
-              value={formdata.title}
-              onChange={(e) => setFormdata({ ...formdata, title: e.target.value })}
-              className='border border-gray-400 p-2 outline-none rounded hover:cursor-pointer'
-            />
-            <label className='text-blue-500 text-1xl mb-2'>Description about product</label>
-            <textarea
-              value={formdata.description}
-              onChange={(e) => setFormdata({ ...formdata, description: e.target.value })}
-              className='border border-gray-400 outline-none rounded hover:cursor-pointer'
-            ></textarea>
-            <label className='text-blue-500 text-1xl'>Amount</label>
-            <input
-              type='number'
-              value={formdata.amount}
-              onChange={(e) => setFormdata({ ...formdata, amount: e.target.value })}
-              className='border border-gray-400 p-2 outline-none rounded mb-6 hover:cursor-pointer'
-            />
-            <select
-              value={formdata.status}
-              onChange={(e) => setFormdata({ ...formdata, status: e.target.value })}
-              className='text-blue-500 text-1xl border border-gray-400 p-2 outline-none rounded hover:cursor-pointer '
+        <div className='mt-10 bg-white shadow-xl rounded-2xl p-8 w-full max-w-2xl mx-auto'>
+          <div className="flex justify-center mb-4">
+            <Upload size={40} className="text-white bg-blue-600 p-2 rounded-full shadow-md" />
+          </div>
+          <form onSubmit={handlesubmit} className='space-y-5'>
+            <div>
+              <label className='block text-blue-700 font-semibold mb-1'>Upload Product Image</label>
+              <input
+                type='file'
+                onChange={(e) => setFormdata({ ...formdata, image: e.target.files[0] })}
+                className='w-full bg-gray-100 p-2 rounded border border-gray-300 text-gray-800'
+              />
+            </div>
+            <div>
+              <label className='block text-blue-700 font-semibold mb-1'>Product Title</label>
+              <input
+                type='text'
+                value={formdata.title}
+                onChange={(e) => setFormdata({ ...formdata, title: e.target.value })}
+                className='w-full border border-gray-300 p-2 rounded bg-gray-100 text-gray-800'
+              />
+            </div>
+            <div>
+              <label className='block text-blue-700 font-semibold mb-1'>Product Description</label>
+              <textarea
+                value={formdata.description}
+                onChange={(e) => setFormdata({ ...formdata, description: e.target.value })}
+                className='w-full border border-gray-300 p-2 rounded bg-gray-100 text-gray-800'
+              />
+            </div>
+            <div>
+              <label className='block text-blue-700 font-semibold mb-1'>Amount</label>
+              <input
+                type='number'
+                value={formdata.amount}
+                onChange={(e) => setFormdata({ ...formdata, amount: e.target.value })}
+                className='w-full border border-gray-300 p-2 rounded bg-gray-100 text-gray-800'
+              />
+            </div>
+            <div>
+              <label className='block text-blue-700 font-semibold mb-1'>Status</label>
+              <select
+                value={formdata.status}
+                onChange={(e) => setFormdata({ ...formdata, status: e.target.value })}
+                className='w-full border border-gray-300 p-2 rounded bg-gray-100 text-gray-800'
+              >
+                <option value=''>Choose Status</option>
+                <option value='Sold'>Sold</option>
+                <option value='Not sold'>Not Sold</option>
+              </select>
+            </div>
+            <button
+              type='submit'
+              className='w-full bg-blue-600 text-white py-2 rounded shadow hover:bg-blue-700 transition'
             >
-              <option value=''>Choose Status</option>
-              <option value='Sold'>Sold</option>
-              <option value='Not sold'>Not sold</option>
-            </select>
-            <button className='bg-blue-500 mt-4 rounded p-2 text-white hover:cursor-pointer'>Upload</button>
+              Upload
+            </button>
           </form>
         </div>
       )}
     </>
   )
 }
-
 export default AdminPage
