@@ -93,7 +93,32 @@ const AdminPage = () => {
             onClick={() => setPage(prev => ({ ...prev, upload: !prev.upload }))}
             className='bg-blue-100 text-blue-700 px-6 py-2 rounded-full text-lg font-semibold shadow hover:bg-blue-200 transition cursor-pointer'
           >
-            Upload Product
+            Add Product
+          </li>
+          <li
+           className='bg-blue-100 text-blue-700 px-6 py-2 rounded-full text-lg font-semibold shadow hover:bg-blue-200 transition cursor-pointer'
+          >
+            Edit Product
+          </li>
+          <li
+           className='bg-blue-100 text-blue-700 px-6 py-2 rounded-full text-lg font-semibold shadow hover:bg-blue-200 transition cursor-pointer'
+          >
+            Customers
+          </li>
+            <li
+           className='bg-blue-100 text-blue-700 px-6 py-2 rounded-full text-lg font-semibold shadow hover:bg-blue-200 transition cursor-pointer'
+          >
+            Reports
+          </li>
+            <li
+           className='bg-blue-100 text-blue-700 px-6 py-2 rounded-full text-lg font-semibold shadow hover:bg-blue-200 transition cursor-pointer'
+          >
+            Trending
+          </li>
+            <li
+           className='bg-blue-100 text-blue-700 px-6 py-2 rounded-full text-lg font-semibold shadow hover:bg-blue-200 transition cursor-pointer'
+          >
+           Top 5 Best Customer
           </li>
         </ul>
       </nav>
