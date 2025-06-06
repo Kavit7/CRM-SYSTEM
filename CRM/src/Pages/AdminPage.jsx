@@ -1,4 +1,4 @@
-import { User, Upload, CheckCircle } from 'lucide-react'
+import { User, Upload, CheckCircle,XCircle} from 'lucide-react'
 import { useState } from 'react'
 import '@fontsource/roboto/500.css'
 
@@ -15,7 +15,7 @@ const AdminPage = () => {
     hour12: true
   }
   const formatted = now.toLocaleString('en-US', options)
-
+  const [success,setSuccess]=useState(false)
   const [page, setPage] = useState({ upload: false })
   const [formdata, setFormdata] = useState({
     image: null,
@@ -46,14 +46,14 @@ const AdminPage = () => {
       })
       const result = await response.json()
       if (response.ok) {
-        setError(true)
+        setSuccess(true)
         console.log(result.message)
       } else {
-        alert(result.error)
+        setError(true)
         console.log(result.error)
       }
     } catch (err) {
-      alert("Something went wrong. Please try again.")
+      setError(true)
       console.log(err)
     }
   }
@@ -75,8 +75,22 @@ const AdminPage = () => {
       {error && (
         <div className='fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50'>
           <div className='bg-white rounded-xl p-6 max-w-sm w-full text-center shadow-xl'>
+            <XCircle className="mx-auto text-red-600 w-12 h-12 mb-3" />
+            <h1 className='font-semibold text-lg text-green-700'>Something goes error. Please Check data to the Form if are correctly</h1>
+            <button
+              onClick={handleReload}
+              className='mt-4 bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded shadow transition'
+            >
+              OK
+            </button>
+          </div>
+        </div>
+      )}
+        {success && (
+        <div className='fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50'>
+          <div className='bg-white rounded-xl p-6 max-w-sm w-full text-center shadow-xl'>
             <CheckCircle className="mx-auto text-green-600 w-12 h-12 mb-3" />
-            <h1 className='font-semibold text-lg text-green-700'>Data Successfully Submitted</h1>
+            <h1 className='font-semibold text-lg text-green-700'>Data added successfully ....</h1>
             <button
               onClick={handleReload}
               className='mt-4 bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded shadow transition'
