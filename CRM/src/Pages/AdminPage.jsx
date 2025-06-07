@@ -1,5 +1,5 @@
 import { User, Upload, CheckCircle,XCircle} from 'lucide-react'
-import { useState } from 'react'
+import { useState,useEffect } from 'react'
 import '@fontsource/roboto/500.css'
 
 const AdminPage = () => {
@@ -14,6 +14,7 @@ const AdminPage = () => {
     second: '2-digit',
     hour12: true
   }
+  const [products, setProducts] = useState([])
   const formatted = now.toLocaleString('en-US', options)
   const [success,setSuccess]=useState(false)
   const [page, setPage] = useState({ upload: false })
@@ -25,38 +26,86 @@ const AdminPage = () => {
     status: '',
   })
   const [error, setError] = useState(false)
+useEffect(() => {
+  const fetchProducts = async () => {
+    try {
+      const res = await fetch('http://localhost:4000/products');
+      const data = await res.json();
+      setProducts(data);
+
+    } catch (err) {
+      console.error('Fetch error:', err);
+    }
+  };
+  fetchProducts();
+}, []);
 
   const handleReload = () => {
     window.location.reload()
   }
+const handleEdit = async (e, productId) => {
+  e.preventDefault();
+  try {
+    const response = await fetch(`http://localhost:4000/products/${productId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ status: "Sold" })
+    });
 
-  const handlesubmit = async (e) => {
-    e.preventDefault()
-    const data = new FormData()
-    data.append('image', formdata.image)
-    data.append('title', formdata.title)
-    data.append('description', formdata.description)
-    data.append('amount', formdata.amount)
-    data.append('status', formdata.status)
+    const result = await response.json();
 
-    try {
-      const response = await fetch('http://localhost:4000/upload', {
-        method: "POST",
-        body: data
-      })
-      const result = await response.json()
-      if (response.ok) {
-        setSuccess(true)
-        console.log(result.message)
-      } else {
-        setError(true)
-        console.log(result.error)
-      }
-    } catch (err) {
-      setError(true)
-      console.log(err)
+    if (response.ok) {
+      // Optional: update local product list
+      const updatedProducts = products.map((product) =>
+        product.id === productId ? { ...product, status: "Sold" } : product
+      );
+      setProducts(updatedProducts);
+      console.log("Product status updated successfully");
+    } else {
+      console.error("Update failed:", result.error);
     }
+  } catch (error) {
+    console.error("Error updating product:", error);
   }
+};
+
+const handlesubmit = async (e) => {
+  e.preventDefault()
+  const data = new FormData()
+  data.append('image', formdata.image)
+  data.append('title', formdata.title)
+  data.append('description', formdata.description)
+  data.append('amount', formdata.amount)
+  data.append('status', formdata.status)
+
+  try {
+    const response = await fetch('http://localhost:4000/upload', {
+      method: "POST",
+      body: data
+    })
+    const result = await response.json()
+    if (response.ok) {
+     setSuccess(true)
+setPage(prev => ({ ...prev, upload: false }))
+// Re-fetch latest products from the server
+const res = await fetch('http://localhost:4000/products')
+const data = await res.json()
+setProducts(data)
+      console.log(result.message)
+    } else {
+      setError(true)
+      setPage(prev => ({ ...prev, upload: false })) // hide form
+      console.log(result.error)
+    }
+  } catch (err) {
+    setError(true)
+    setPage(prev => ({ ...prev, upload: false })) // hide form
+    console.log(err)
+  }
+}
+
 
   return (
     <>
@@ -83,7 +132,7 @@ const AdminPage = () => {
               onClick={handleReload}
               className='mt-4 bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded shadow transition'
             >
-              OK
+            OK
             </button>
           </div>
         </div>
@@ -138,9 +187,40 @@ const AdminPage = () => {
           </li>
         </ul>
       </nav>
+ <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 p-6">
+  {products.map((product, index) => (
+    <div key={index} className="bg-white shadow-md rounded-lg overflow-hidden">
+      <img
+       src={`http://localhost:4000/${product.image_path.replace(/\\/g, '/')}`} // adjust path
+        alt={product.title}
+        className="w-full h-70 object-cover"
+      />
+      <div className="p-4">
+        <h3 className="text-lg font-bold text-blue-700">{product.title}</h3>
+        <p className="text-gray-600">{product.description}</p>
+        <p className="text-green-600 font-semibold mt-2 line-through"><span className="line-through decoration-yellow-400">${product.amount}</span></p>
+        <span className={`inline-block mt-2 px-3 py-1 rounded-full text-sm ${product.status === 'Sold' ? 'bg-red-200 text-red-800' : 'bg-green-200 text-green-800'}`}>
+          {product.status}
+        </span>
+        <span>
+          {product.status !== 'Sold' && (
+  <button
+    onClick={(e) => handleEdit(e,product.id)}
+    className='bg-green-400 ml-3 px-3 rounded-full py-1 text-sm hover:cursor-pointer'
+  >
+    Mark as Sold
+  </button>
+)}
+
+</span>
+      </div>
+    </div>
+  ))}
+</div>
+
 
       {page.upload && (
-        <div className='mt-10 bg-white shadow-xl rounded-2xl p-8 w-full max-w-2xl mx-auto'>
+        <div className='fixed top-20 left-1/2 transform -translate-x-1/2 bg-white shadow-2xl rounded-2xl p-8 w-full max-w-2xl z-50'>
           <div className="flex justify-center mb-4">
             <Upload size={40} className="text-white bg-blue-600 p-2 rounded-full shadow-md" />
           </div>
